@@ -1,12 +1,21 @@
-import { Link, Form, useActionData, LoaderFunctionArgs } from "react-router-dom";
+import { Link, Form, useActionData, LoaderFunctionArgs, redirect, useLoaderData } from "react-router-dom";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { getProductById } from "../services/ProductService";
+import { Product } from "../types";
 
 export async function loader( { params }: LoaderFunctionArgs ) {
-  console.log(params.id);
-  return {}
+  if (params.id !== undefined) {
+    const product = await getProductById(+params.id);
+    if( !product ) {
+        // throw new Response('', { status: 404, statusText: "No encontrado" });
+        return redirect("/")
+    }
+    return product;
+  }
 }
 
 export const EditProduct = () => {
+  const product = useLoaderData() as Product;
   const error = useActionData() as string;
   
   return (
@@ -36,6 +45,7 @@ export const EditProduct = () => {
             className="mt-2 block w-full p-3 bg-gray-50"
             placeholder="Nombre del Producto"
             name="name"
+            defaultValue={product.name}
           />
         </div>
         <div className="mb-4">
@@ -48,6 +58,7 @@ export const EditProduct = () => {
             className="mt-2 block w-full p-3 bg-gray-50"
             placeholder="Precio Producto. ej. 200, 300"
             name="price"
+            defaultValue={product.price}
           />
         </div>
         <input
