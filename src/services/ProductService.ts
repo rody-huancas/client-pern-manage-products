@@ -57,3 +57,7 @@ export async function getProductById (id: Product['id']) {
     throw error;
   }
 }
+
+export async function updateProduct (data: ProductData, id: Product['id']) {
+
+}
